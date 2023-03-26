@@ -6,7 +6,7 @@ CONTAINERD_VERSION="${1}"
 CNI_PLUGINS_VERSION="${2}"
 DNS_CLUSTER_IP="${3}"
 
-if ! grep 'controller-k8s' /etc/hosts &> /dev/null; then
+if ! grep 'master-1-k8s' /etc/hosts &> /dev/null; then
   # shellcheck disable=SC2002
   cat multipass-hosts | sudo tee -a /etc/hosts
 fi
