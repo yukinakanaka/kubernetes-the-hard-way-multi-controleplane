@@ -29,7 +29,7 @@ declare -a WORKER_FILES=(
   "./downloads/cri-containerd-${CONTAINERD_VERSION}-linux-arm64.tar.gz"
 )
 
-multipass list | grep -E -v "Name|\-\-" | awk '{var=sprintf("%s\t%s",$3,$1); print var}' > multipass-hosts
+multipass list | awk 'NR>1 {print $3"\t"$1}' > multipass-hosts
 
 for file in ./*/*.sh; do
   cd "$(dirname ./"${file}")" || exit
