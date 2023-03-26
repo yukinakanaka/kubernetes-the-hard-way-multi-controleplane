@@ -32,10 +32,10 @@ if ! command -v kubectl &> /dev/null || ! command -v kube-proxy &> /dev/null || 
     /var/run/kubernetes
 
   mkdir containerd
-  tar -xvf "cri-containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz" -C containerd
+  tar -xvf "cri-containerd-${CONTAINERD_VERSION}-linux-arm64.tar.gz" -C containerd
   mv containerd/usr/local/bin/crictl .
   mv containerd/usr/local/sbin/runc .
-  sudo tar -xvf "cni-plugins-linux-amd64-v${CNI_PLUGINS_VERSION}.tgz" -C /opt/cni/bin/
+  sudo tar -xvf "cni-plugins-linux-arm64-v${CNI_PLUGINS_VERSION}.tgz" -C /opt/cni/bin/
   chmod +x crictl kubectl kube-proxy kubelet runc
   sudo mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
   sudo mv containerd/usr/local/bin/* /bin/

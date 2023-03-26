@@ -10,9 +10,9 @@ if ! grep 'worker-1-k8s' /etc/hosts &> /dev/null; then
 fi
 
 if [[ ! -x $(command -v etcd) || ! -x $(command -v etcdctl) ]]; then
-  tar -xvf etcd-v"${ETCD_VERSION}"-linux-amd64.tar.gz
-  sudo mv etcd-v"${ETCD_VERSION}"-linux-amd64/etcd* /usr/local/bin/
-  rm -rf etcd-v"${ETCD_VERSION}"-linux-amd64.tar.gz etcd-v"${ETCD_VERSION}"-linux-amd64/
+  tar -xvf etcd-v"${ETCD_VERSION}"-linux-arm64.tar.gz
+  sudo mv etcd-v"${ETCD_VERSION}"-linux-arm64/etcd* /usr/local/bin/
+  rm -rf etcd-v"${ETCD_VERSION}"-linux-arm64.tar.gz etcd-v"${ETCD_VERSION}"-linux-arm64/
 fi
 
 if [[ ! -f /etc/etcd/kubernetes.pem || ! -f /etc/etcd/kubernetes-key.pem ]]; then

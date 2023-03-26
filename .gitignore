@@ -3,9 +3,9 @@
 *.csr
 *.json
 01-config-files/encryption/encryption-config.yaml
-01-config-files/downloads/cni-plugins-linux-amd64-v*.tgz
-01-config-files/downloads/cri-containerd-*-linux-amd64.tar.gz
-01-config-files/downloads/etcd-v*-linux-amd64.tar.gz
+01-config-files/downloads/cni-plugins-linux-*-v*.tgz
+01-config-files/downloads/cri-containerd-*-linux-*.tar.gz
+01-config-files/downloads/etcd-v*-linux-*.tar.gz
 01-config-files/downloads/kube-apiserver
 01-config-files/downloads/kube-controller-manager
 01-config-files/downloads/kube-proxy

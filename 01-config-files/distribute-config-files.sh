@@ -19,14 +19,14 @@ declare -a CONTROLLER_FILES=(
   './downloads/kube-apiserver'
   './downloads/kube-controller-manager'
   './downloads/kube-scheduler'
-  "./downloads/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz"
+  "./downloads/etcd-v${ETCD_VERSION}-linux-arm64.tar.gz"
 )
 declare -a WORKER_FILES=(
   './kube-proxy/kube-proxy.kubeconfig'
   './downloads/kube-proxy'
   './downloads/kubelet'
-  "./downloads/cni-plugins-linux-amd64-v${CNI_PLUGINS_VERSION}.tgz"
-  "./downloads/cri-containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz"
+  "./downloads/cni-plugins-linux-arm64-v${CNI_PLUGINS_VERSION}.tgz"
+  "./downloads/cri-containerd-${CONTAINERD_VERSION}-linux-arm64.tar.gz"
 )
 
 multipass list | grep -E -v "Name|\-\-" | awk '{var=sprintf("%s\t%s",$3,$1); print var}' > multipass-hosts
