@@ -37,7 +37,7 @@ for file in ./*/*.sh; do
   cd - || exit
 done
 
-for instance in $(multipass list | grep 'controller' | awk '{ print $1 }'); do
+for instance in $(multipass list | grep 'master' | awk '{ print $1 }'); do
   for file in "${COMMON_FILES[@]}" "${CONTROLLER_FILES[@]}"; do
     transfer_file "${file}" "${instance}"
   done

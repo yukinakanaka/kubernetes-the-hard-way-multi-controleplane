@@ -70,9 +70,9 @@ cd 01-config-files/ || exit
 bash distribute-config-files.sh
 cd - || exit
 
-msg_info 'Push controller and worker setup scripts'
+msg_info 'Push master and worker setup scripts'
 
-cd 02-controllers/ || exit
+cd 02-masters/ || exit
 bash transfer-shell-scripts.sh
 cd - || exit
 cd 03-workers/ || exit
