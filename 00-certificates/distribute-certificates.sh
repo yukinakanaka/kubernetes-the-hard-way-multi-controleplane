@@ -14,6 +14,7 @@ for file in ./*/*.sh; do
 done
 
 for instance in $(multipass list | grep 'worker' | awk '{ print $1 }'); do
+  # TODO: kube-proxyは必要ないのか？
   for file in './00-Certificate-Authority/ca.pem' "./02-kubelet-client/${instance}-key.pem" "./02-kubelet-client/${instance}.pem"; do
     transfer_file "${file}" "${instance}"
   done

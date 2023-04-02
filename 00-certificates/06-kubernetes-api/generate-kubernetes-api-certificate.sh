@@ -22,12 +22,14 @@ done < <(get_ips)
 
 # This works because we only have 1 controller
 # logic will have to change if we have more than 1
+# TODO: ロジックはどのように変わるべきなのか？
 while IFS= read -r ip; do
   if [[ -n ${ip} ]]; then
     COMPUTER_IP_ADDRESSES+=("${ip}")
   fi
-done < <(multipass list | grep -E "${VERSION_REGEX}" | awk '{ print $3 }')
+done < <(multipass list | grep '\-k8s' | awk '{ print $3 }')
 
+# TODO: IPアドレスのフォーマットチェックをしているだけ？
 for ip in "${COMPUTER_IP_ADDRESSES[@]}"; do
   if grep -E "${VERSION_REGEX}" <<< "${ip}" > /dev/null; then
     COMPUTER_IPV4_ADDRESSES+=("${ip}")

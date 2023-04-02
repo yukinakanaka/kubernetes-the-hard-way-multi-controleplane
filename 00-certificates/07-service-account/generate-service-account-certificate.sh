@@ -6,6 +6,7 @@ COUNTRY="${1:-US}"
 CITY="${2:-Austin}"
 STATE="${3:-Texas}"
 
+# TODO: 何用のservice-account?
 cat > service-account-csr.json <<EOF
 {
   "CN": "service-accounts",
