@@ -11,6 +11,7 @@ if ! grep 'master-1-k8s' /etc/hosts &> /dev/null; then
   cat multipass-hosts | sudo tee -a /etc/hosts
 fi
 
+# socat, conntrack, ipsetとは
 if ! command -v socat &> /dev/null || ! command -v conntrack &> /dev/null || ! command -v ipset &> /dev/null; then
   echo 'Installing socat conntrack and ipset'
   sudo apt update
@@ -94,6 +95,7 @@ fi
 if [[ ! -f /var/lib/kubelet/kubelet-config.yaml || ! -f /var/lib/kubelet/kubeconfig || ! -f /etc/cni/net.d/99-loopback.conf ]]; then
   echo 'Creating kubelet configuration'
 
+# これは何のために必要？
   cat <<EOF | sudo tee /etc/cni/net.d/99-loopback.conf
 {
     "cniVersion": "0.3.1",
