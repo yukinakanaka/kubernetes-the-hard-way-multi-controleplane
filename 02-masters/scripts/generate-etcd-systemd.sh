@@ -4,6 +4,7 @@ IFS=$'\n\t'
 
 ETCD_VERSION="${1}"
 
+# Multi Clusterにしたら変更する必要がある
 if ! grep 'worker-1-k8s' /etc/hosts &> /dev/null; then
   # shellcheck disable=SC2002
   cat multipass-hosts | sudo tee -a /etc/hosts

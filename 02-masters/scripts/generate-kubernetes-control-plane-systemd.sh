@@ -37,7 +37,7 @@ for ip in "${INTERNAL_IPS[@]}"; do
 done
 
 echo 'Creating kube-apiserver systemd service'
-
+# API Serverのアドレスはここで指定
 cat <<EOF | sudo tee /etc/systemd/system/kube-apiserver.service
 [Unit]
 Description=Kubernetes API Server
@@ -149,6 +149,7 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
+# systemdに登録するservice
 declare -a K8S_SERVICES=('kube-apiserver' 'kube-controller-manager' 'kube-scheduler')
 sudo systemctl enable --now "${K8S_SERVICES[@]}"
 

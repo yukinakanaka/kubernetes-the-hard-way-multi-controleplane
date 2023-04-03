@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# TODO: このconfigはどこで誰が使う？
+# TODO: このconfigはどこで誰が使う？→master nodeで使う
 kubectl config set-cluster kubernetes-the-hard-way \
   --certificate-authority=../../00-certificates/00-Certificate-Authority/ca.pem \
   --embed-certs=true \
