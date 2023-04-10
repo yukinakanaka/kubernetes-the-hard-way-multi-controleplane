@@ -28,13 +28,22 @@ declare -a WORKER_FILES=(
   "./downloads/cni-plugins-linux-arm64-v${CNI_PLUGINS_VERSION}.tgz"
   "./downloads/cri-containerd-${CONTAINERD_VERSION}-linux-arm64.tar.gz"
 )
+declare -a LB_FILES=(
+  'multipass-hosts'
+)
 
-multipass list | grep '\-k8s' | awk 'NR>1 {print $3"\t"$1}' > multipass-hosts
+multipass list | grep '\-k8s' | awk '{print $3"\t"$1}' > multipass-hosts
 
 for file in ./*/*.sh; do
   cd "$(dirname ./"${file}")" || exit
   bash "${file##*/}"
   cd - || exit
+done
+
+for instance in $(multipass list | grep 'load-balancer' | awk '{ print $1 }'); do
+  for file in "${LB_FILES[@]}"; do
+    transfer_file "${file}" "${instance}"
+  done
 done
 
 for instance in $(multipass list | grep 'master' | awk '{ print $1 }'); do

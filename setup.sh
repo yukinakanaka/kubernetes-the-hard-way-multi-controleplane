@@ -79,6 +79,12 @@ cd 03-workers/ || exit
 bash transfer-shell-scripts.sh
 cd - || exit
 
+msg_info 'Push load balancer setup scripts'
+
+cd 09-haproxy/ || exit
+bash transfer-shell-scripts.sh
+cd - || exit
+
 msg_info 'Configuring the Kubernetes control plane'
 
 for i in 'master-1-k8s' 'master-2-k8s'; do
@@ -86,6 +92,13 @@ for i in 'master-1-k8s' 'master-2-k8s'; do
   multipass exec ${i} -- bash generate-etcd-systemd.sh "${ETCD_VERSION}"
   multipass exec ${i} -- bash generate-kubernetes-control-plane-systemd.sh "${SERVICE_CLUSTER_IP_RANGE}" "${SERVICE_NODE_PORT_RANGE}" "${CLUSTER_CIDR}" "${KUBE_API_CLUSTER_IP}"
   multipass exec ${i} -- bash generate-kubelet-rbac-authorization.sh
+done
+
+msg_info 'Configuring load balancer'
+
+for i in 'load-balancer-k8s'; do
+  msg_info "Provisioning ${i}"
+  multipass exec load-balancer-k8s -- bash generate-haproxy.sh
 done
 
 msg_info 'Configuring the Kubernetes workers'
