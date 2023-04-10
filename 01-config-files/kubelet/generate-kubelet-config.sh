@@ -5,7 +5,7 @@ IFS=$'\n\t'
 # This works because we only have 1 controller
 # logic will have to change if we have more than 1
 # TODO: どの様に変える必要があるか？API_SERVERのIPアドレスをLBのドメインにする必要がある？
-KUBERNETES_VIRTUAL_IP_ADDRESS="$(multipass list | grep 'master' | awk '{ print $1 }' | xargs multipass info | grep 'IPv4' | awk '{ print $2 }')"
+KUBERNETES_VIRTUAL_IP_ADDRESS="$(multipass list | grep 'load-balancer-k8s' | awk '{ print $1 }' | xargs multipass info | grep 'IPv4' | awk '{ print $2 }')"
 
 for instance in $(multipass list | grep 'worker' | awk '{ print $1 }'); do
   kubectl config set-cluster kubernetes-the-hard-way \

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in 'master-1-k8s' 'worker-1-k8s' 'worker-2-k8s' ; do
+for i in 'load-balancer-k8s' 'master-1-k8s' 'master-2-k8s' 'worker-1-k8s' 'worker-2-k8s' ; do
   multipass delete "${i}"
 done
 

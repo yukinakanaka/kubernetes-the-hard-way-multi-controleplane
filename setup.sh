@@ -54,7 +54,7 @@ KUBE_API_CLUSTER_IP="$(ipcalc "${SERVICE_CLUSTER_IP_RANGE}" | grep 'HostMin' | a
 
 msg_info 'Creating multipass instances'
 
-for i in 'master-1-k8s' 'worker-1-k8s' 'worker-2-k8s' ; do
+for i in 'load-balancer-k8s' 'master-1-k8s' 'master-2-k8s' 'worker-1-k8s' 'worker-2-k8s' ; do
   multipass launch --name "${i}" --cpus 2 --mem 2048M --disk 11G 22.04
 done
 
@@ -81,10 +81,12 @@ cd - || exit
 
 msg_info 'Configuring the Kubernetes control plane'
 
-multipass exec master-1-k8s -- bash generate-etcd-systemd.sh "${ETCD_VERSION}"
-multipass exec master-1-k8s -- bash generate-kubernetes-control-plane-systemd.sh "${SERVICE_CLUSTER_IP_RANGE}" "${SERVICE_NODE_PORT_RANGE}" "${CLUSTER_CIDR}" "${KUBE_API_CLUSTER_IP}"
-multipass exec master-1-k8s -- bash generate-kubelet-rbac-authorization.sh
-
+for i in 'master-1-k8s' 'master-2-k8s'; do
+  msg_info "Provisioning ${i}"
+  multipass exec ${i} -- bash generate-etcd-systemd.sh "${ETCD_VERSION}"
+  multipass exec ${i} -- bash generate-kubernetes-control-plane-systemd.sh "${SERVICE_CLUSTER_IP_RANGE}" "${SERVICE_NODE_PORT_RANGE}" "${CLUSTER_CIDR}" "${KUBE_API_CLUSTER_IP}"
+  multipass exec ${i} -- bash generate-kubelet-rbac-authorization.sh
+done
 
 msg_info 'Configuring the Kubernetes workers'
 
