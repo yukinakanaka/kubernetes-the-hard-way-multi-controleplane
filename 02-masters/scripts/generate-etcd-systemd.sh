@@ -28,7 +28,7 @@ while IFS= read -r ip; do
     INTERNAL_IPS+=("${ip}")
   fi
 done < <(hostname -I | tr '[:space:]' '\n')
-ETCD_NAME="$(hostname -s)"
+HOST_NAME="$(hostname -s)"
 VERSION_REGEX='([0-9]*)\.'
 
 for ip in "${INTERNAL_IPS[@]}"; do
@@ -39,6 +39,8 @@ done
 
 echo 'Creating etcd systemd unit'
 
+INITIAL_CLUSTER=$(grep master multipass-hosts | awk '{printf $2"=https://"$1":2380,"}' | sed 's/,$//' )
+
 cat <<EOF | sudo tee /etc/systemd/system/etcd.service
 [Unit]
 Description=etcd
@@ -47,7 +49,7 @@ Documentation=https://github.com/coreos
 [Service]
 Type=notify
 ExecStart=/usr/local/bin/etcd \\
-  --name ${ETCD_NAME} \\
+  --name ${HOST_NAME} \\
   --cert-file=/etc/etcd/kubernetes.pem \\
   --key-file=/etc/etcd/kubernetes-key.pem \\
   --peer-cert-file=/etc/etcd/kubernetes.pem \\
@@ -61,7 +63,7 @@ ExecStart=/usr/local/bin/etcd \\
   --listen-client-urls https://${COMPUTER_IPV4_ADDRESSES[0]}:2379,https://127.0.0.1:2379 \\
   --advertise-client-urls https://${COMPUTER_IPV4_ADDRESSES[0]}:2379 \\
   --initial-cluster-token etcd-cluster-0 \\
-  --initial-cluster ${ETCD_NAME}=https://${COMPUTER_IPV4_ADDRESSES[0]}:2380 \\
+  --initial-cluster ${INITIAL_CLUSTER} \\
   --initial-cluster-state new \\
   --data-dir=/var/lib/etcd
 Restart=on-failure
@@ -74,12 +76,5 @@ EOF
 echo 'Reloading systemd, enabling and starting etcd systemd service'
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now etcd
-
-echo 'Listing etcd members'
-
-sudo ETCDCTL_API=3 etcdctl member list \
-  --endpoints=https://127.0.0.1:2379 \
-  --cacert=/etc/etcd/ca.pem \
-  --cert=/etc/etcd/kubernetes.pem \
-  --key=/etc/etcd/kubernetes-key.pem
+sudo systemctl enable etcd
+exit 0

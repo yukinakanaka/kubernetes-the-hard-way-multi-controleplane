@@ -85,26 +85,44 @@ cd 09-haproxy/ || exit
 bash transfer-shell-scripts.sh
 cd - || exit
 
-msg_info 'Configuring the Kubernetes control plane'
+msg_info 'Configuring the etcd on Kubernetes control plane'
 
 for i in 'master-1-k8s' 'master-2-k8s'; do
-  msg_info "Provisioning ${i}"
+  msg_info "Preparing etcd: ${i}"
   multipass exec ${i} -- bash generate-etcd-systemd.sh "${ETCD_VERSION}"
-  multipass exec ${i} -- bash generate-kubernetes-control-plane-systemd.sh "${SERVICE_CLUSTER_IP_RANGE}" "${SERVICE_NODE_PORT_RANGE}" "${CLUSTER_CIDR}" "${KUBE_API_CLUSTER_IP}"
-  multipass exec ${i} -- bash generate-kubelet-rbac-authorization.sh
 done
+
+for i in 'master-1-k8s' 'master-2-k8s'; do
+  msg_info "Provisioning etcd: ${i}"
+  multipass restart ${i}
+done
+
+until multipass exec master-1-k8s -- bash -c "ETCDCTL_API=3 etcdctl member list --endpoints=https://127.0.0.1:2379 --cacert=/etc/etcd/ca.pem --cert=/etc/etcd/kubernetes.pem --key=/etc/etcd/kubernetes-key.pem"
+do
+  msg_info "etcd is NOT ready, will sleep for 5 seconds and check again"
+  sleep 5
+done
+msg_info "etcd is ready"
+
+msg_info 'Configuring the Kubernetes control plane'
+for i in 'master-1-k8s' 'master-2-k8s'; do
+  msg_info "Provisioning Kubernetes control plane: ${i}"
+  multipass exec ${i} -- bash generate-kubernetes-control-plane-systemd.sh "${SERVICE_CLUSTER_IP_RANGE}" "${SERVICE_NODE_PORT_RANGE}" "${CLUSTER_CIDR}" "${KUBE_API_CLUSTER_IP}"
+done
+
+multipass exec 'master-1-k8s' -- bash generate-kubelet-rbac-authorization.sh
 
 msg_info 'Configuring load balancer'
 
 for i in 'load-balancer-k8s'; do
-  msg_info "Provisioning ${i}"
+  msg_info "Provisioning load balancer: ${i}"
   multipass exec load-balancer-k8s -- bash generate-haproxy.sh
 done
 
 msg_info 'Configuring the Kubernetes workers'
 
 for i in 'worker-1-k8s' 'worker-2-k8s'; do
-  msg_info "Provisioning ${i}"
+  msg_info "Provisioning the Kubernetes worker: ${i}"
   multipass exec "${i}" -- bash bootstrap-workers.sh "${CONTAINERD_VERSION}" "${CNI_PLUGINS_VERSION}" "${DNS_CLUSTER_IP}"
 done
 
